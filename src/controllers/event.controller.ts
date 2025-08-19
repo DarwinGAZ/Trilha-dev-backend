@@ -43,7 +43,7 @@ export const getEventById: RequestHandler = async (req, res) => {
 export const updateEvent: RequestHandler = async (req, res) => {
     const { id } = req.params;
 
-    const data = updateEventSchema.partial().safeParse(req.body);
+    const data = updateEventSchema.safeParse(req.body);
 
     if (!data.success) {
         return res.json({ error: data.error.flatten().fieldErrors });

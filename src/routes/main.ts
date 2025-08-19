@@ -1,6 +1,7 @@
 import Router from "express";
 import * as pingController from "../controllers/ping.controller";
 import * as eventController from "../controllers/event.controller";
+import * as userController from "../controllers/user.controller";
 
 export const routes = Router();
 
@@ -10,3 +11,9 @@ routes.post("/event", eventController.createEvent);
 routes.get("/event/:id", eventController.getEventById);
 routes.patch("/event/:id", eventController.updateEvent);
 routes.delete("/event/:id", eventController.deleteEvent);
+
+routes.post("/user", userController.createUser);
+routes.get("/users", userController.getAllUsers);
+routes.get("/user", userController.getUserByEmail);
+routes.patch("/user/:id", userController.updateUser);
+routes.delete("/user/:id", userController.deleteUser);
