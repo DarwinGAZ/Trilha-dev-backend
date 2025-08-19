@@ -1,11 +1,16 @@
 import { RequestHandler } from "express";
-import { createEventSchema, updateEventSchema } from "../schemas/eventSchema";
+import {
+    createEventSchema,
+    registerUserToEventSchema,
+    updateEventSchema,
+} from "../schemas/eventSchema";
 import {
     createEventService,
     deleteEventService,
     getEventByIdService,
     updateEventService,
     getEventByNameService,
+    registerUserToEventService,
 } from "../services/events";
 
 export const createEvent: RequestHandler = async (req, res) => {
@@ -70,4 +75,28 @@ export const deleteEvent: RequestHandler = async (req, res) => {
     }
 
     return res.status(200).json({ message: "Evento deletado com sucesso!" });
+};
+
+export const registerUserToEvent: RequestHandler = async (req, res) => {
+    const { eventId } = req.params;
+    const eventIdNumber = Number(eventId);
+
+    const data = registerUserToEventSchema.safeParse(req.body);
+
+    if (!data.success) {
+        return res.json({ error: data.error.flatten().fieldErrors });
+    }
+
+    const registration = await registerUserToEventService(
+        eventIdNumber,
+        data.data.userId
+    );
+
+    if (!registration) {
+        return res.status(404).json({ error: "Dados invalidos" });
+    }
+
+    return res
+        .status(201)
+        .json({ message: "Usuário registrado no evento com sucesso!" });
 };

@@ -32,3 +32,10 @@ export const updateEventSchema = z.object({
         .positive("O número de vagas deve ser positivo")
         .optional(),
 });
+
+export const registerUserToEventSchema = z.object({
+    userId: z.coerce
+        .number()
+        .int()
+        .positive("O ID do usuário deve ser um número positivo"),
+});

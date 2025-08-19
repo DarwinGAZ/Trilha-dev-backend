@@ -20,6 +20,7 @@ model Events {
   startDate DateTime
   local String
   vacanciesLimit Int
+  registrations Registrations[]
 }
 
 model Users {
@@ -27,4 +28,17 @@ model Users {
   name String
   email String @unique
   phone String
+  registrations Registrations[]
+}
+
+model Registrations {
+  id Int @id @default(autoincrement())
+  userId Int
+  eventId Int
+  createdAt DateTime @default(now())
+
+  user Users @relation(fields: [userId], references: [id])
+  event Events @relation(fields: [eventId], references: [id])
+
+  @@unique([userId, eventId])
 }

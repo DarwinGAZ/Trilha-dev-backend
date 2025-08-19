@@ -12,6 +12,8 @@ routes.get("/event/:id", eventController.getEventById);
 routes.patch("/event/:id", eventController.updateEvent);
 routes.delete("/event/:id", eventController.deleteEvent);
 
+routes.post("/event/:eventId/register", eventController.registerUserToEvent);
+
 routes.post("/user", userController.createUser);
 routes.get("/users", userController.getAllUsers);
 routes.get("/user", userController.getUserByEmail);

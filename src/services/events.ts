@@ -73,3 +73,17 @@ export const getEventByNameService = async (name: string) => {
 
     return event;
 };
+
+export const registerUserToEventService = async (
+    eventId: number,
+    userId: number
+) => {
+    const registration = await prisma.registrations.create({
+        data: {
+            eventId: Number(eventId),
+            userId,
+        },
+    });
+
+    return registration;
+};
