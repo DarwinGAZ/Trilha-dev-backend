@@ -130,3 +130,14 @@ export const registrationCountService = async (eventId: number) => {
 
     return count;
 };
+
+export const exportEventUsersService = async (id: number) => {
+    const registrations = await prisma.registrations.findMany({
+        where: { id },
+        include: { user: true },
+    });
+
+    const jsonData = JSON.stringify(registrations, null, 2);
+
+    return jsonData;
+};

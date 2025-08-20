@@ -14,6 +14,7 @@ import {
     unregisterUserFromEventService,
     getAllUsersInEventService,
     registrationCountService,
+    exportEventUsersService,
 } from "../services/events";
 
 export const createEvent: RequestHandler = async (req, res) => {
@@ -154,4 +155,22 @@ export const getAllUsersInEvent: RequestHandler = async (req, res) => {
     }
 
     return res.status(200).json(users);
+};
+
+export const exportEventUsers: RequestHandler = async (req, res) => {
+    const { id } = req.params;
+    const numberId = Number(id);
+
+    const jsonData = await exportEventUsersService(numberId);
+
+    res.setHeader(
+        "Content-Disposition",
+        "attachment; filename=registrations.json"
+    );
+    res.setHeader("Content-Type", "application/json");
+    res.send(jsonData);
+
+    return res
+        .status(200)
+        .json({ message: "Usuários do evento exportados com sucesso!" });
 };

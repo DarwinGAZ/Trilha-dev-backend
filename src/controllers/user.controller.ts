@@ -4,6 +4,7 @@ import {
     deleteUserService,
     getAllUsersService,
     getUserByEmailService,
+    getUserEventsService,
     updateUserService,
 } from "../services/users";
 import {
@@ -90,4 +91,19 @@ export const deleteUser: RequestHandler = async (req, res) => {
     return res
         .status(200)
         .json({ OK: "usuario deletado com sucesso", deletedUser });
+};
+
+export const getUserEvents: RequestHandler = async (req, res) => {
+    const { userId } = req.params;
+    const userIdNumber = Number(userId);
+
+    const userEvents = await getUserEventsService(userIdNumber);
+
+    if (!userEvents || userEvents.length === 0) {
+        return res
+            .status(404)
+            .json({ error: "Nenhum evento encontrado para este usuário" });
+    }
+
+    return res.status(200).json(userEvents);
 };

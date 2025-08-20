@@ -48,3 +48,20 @@ export const deleteUserService = async (id: number) => {
 
     return deletedUser;
 };
+
+export const getUserEventsService = async (userId: number) => {
+    const userEvents = await prisma.users.findUnique({
+        where: { id: userId },
+        include: {
+            registrations: {
+                include: { event: true },
+            },
+        },
+    });
+
+    if (!userEvents) {
+        return null;
+    }
+
+    return userEvents.registrations;
+};
