@@ -1,8 +1,8 @@
 import { RequestHandler } from "express";
 import {
     createEventSchema,
-    registerUserToEventSchema,
     updateEventSchema,
+    UserToEventSchema,
 } from "../schemas/eventSchema";
 import {
     createEventService,
@@ -11,6 +11,9 @@ import {
     updateEventService,
     getEventByNameService,
     registerUserToEventService,
+    unregisterUserFromEventService,
+    getAllUsersInEventService,
+    registrationCountService,
 } from "../services/events";
 
 export const createEvent: RequestHandler = async (req, res) => {
@@ -81,10 +84,23 @@ export const registerUserToEvent: RequestHandler = async (req, res) => {
     const { eventId } = req.params;
     const eventIdNumber = Number(eventId);
 
-    const data = registerUserToEventSchema.safeParse(req.body);
+    const data = UserToEventSchema.safeParse(req.body);
 
     if (!data.success) {
         return res.json({ error: data.error.flatten().fieldErrors });
+    }
+
+    const event = await getEventByIdService(eventId);
+
+    if (!event) {
+        return res.status(404).json({ error: "Evento não encontrado" });
+    }
+
+    const count = await registrationCountService(eventIdNumber);
+    if (event.vacanciesLimit && count >= event.vacanciesLimit) {
+        return res
+            .status(400)
+            .json({ error: "Limite de vagas atingido para este evento!" });
     }
 
     const registration = await registerUserToEventService(
@@ -99,4 +115,43 @@ export const registerUserToEvent: RequestHandler = async (req, res) => {
     return res
         .status(201)
         .json({ message: "Usuário registrado no evento com sucesso!" });
+};
+
+export const unregisterUserFromEvent: RequestHandler = async (req, res) => {
+    const { eventId } = req.params;
+    const eventIdNumber = Number(eventId);
+
+    const data = UserToEventSchema.safeParse(req.body);
+
+    if (!data.success) {
+        return res.json({ error: data.error.flatten().fieldErrors });
+    }
+
+    const unresgistration = await unregisterUserFromEventService(
+        eventIdNumber,
+        data.data.userId
+    );
+
+    if (!unresgistration) {
+        return res.status(404).json({ error: "Dados invalidos" });
+    }
+
+    return res
+        .status(200)
+        .json({ message: "Usuário removido do evento com sucesso!" });
+};
+
+export const getAllUsersInEvent: RequestHandler = async (req, res) => {
+    const { eventId } = req.params;
+    const eventIdNumber = Number(eventId);
+
+    const users = await getAllUsersInEventService(eventIdNumber);
+
+    if (!users || users.length === 0) {
+        return res
+            .status(404)
+            .json({ error: "Nenhum usuário ou evento encontrado" });
+    }
+
+    return res.status(200).json(users);
 };

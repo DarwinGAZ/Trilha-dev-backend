@@ -87,3 +87,46 @@ export const registerUserToEventService = async (
 
     return registration;
 };
+
+export const unregisterUserFromEventService = async (
+    eventId: number,
+    userId: number
+) => {
+    try {
+        const registration = await prisma.registrations.delete({
+            where: {
+                userId_eventId: {
+                    userId,
+                    eventId,
+                },
+            },
+        });
+        return registration;
+    } catch (err) {
+        console.error("Erro ao cancelar inscrição:", err);
+        return null;
+    }
+};
+
+export const getAllUsersInEventService = async (eventId: number) => {
+    const registrations = await prisma.registrations.findMany({
+        where: {
+            eventId,
+        },
+        include: {
+            user: true,
+        },
+    });
+
+    return registrations.map((registration) => registration.user);
+};
+
+export const registrationCountService = async (eventId: number) => {
+    const count = await prisma.registrations.count({
+        where: {
+            eventId,
+        },
+    });
+
+    return count;
+};

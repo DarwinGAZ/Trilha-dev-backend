@@ -12,6 +12,7 @@ export const createEventSchema = z.object({
     local: z.string(),
     vacanciesLimit: z
         .number()
+        .min(1, "O número de vagas deve ser pelo menos 1")
         .int()
         .positive("O número de vagas deve ser positivo"),
 });
@@ -33,7 +34,7 @@ export const updateEventSchema = z.object({
         .optional(),
 });
 
-export const registerUserToEventSchema = z.object({
+export const UserToEventSchema = z.object({
     userId: z.coerce
         .number()
         .int()

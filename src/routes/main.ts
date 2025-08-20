@@ -13,6 +13,11 @@ routes.patch("/event/:id", eventController.updateEvent);
 routes.delete("/event/:id", eventController.deleteEvent);
 
 routes.post("/event/:eventId/register", eventController.registerUserToEvent);
+routes.delete(
+    "/event/:eventId/unregister",
+    eventController.unregisterUserFromEvent
+);
+routes.get("/event/:eventId/users", eventController.getAllUsersInEvent);
 
 routes.post("/user", userController.createUser);
 routes.get("/users", userController.getAllUsers);
