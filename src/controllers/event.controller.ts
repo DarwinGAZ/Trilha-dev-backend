@@ -16,6 +16,7 @@ import {
     registrationCountService,
     exportEventUsersService,
 } from "../services/events";
+import { createJwt, verifyJwt } from "../libs/jwt";
 
 export const createEvent: RequestHandler = async (req, res) => {
     const data = createEventSchema.safeParse(req.body);
@@ -34,7 +35,12 @@ export const createEvent: RequestHandler = async (req, res) => {
 
     const newEvent = await createEventService(validatedData);
 
-    return res.status(201).json(newEvent);
+    const token = createJwt(newEvent.id);
+
+    return res.status(201).json({
+        event: newEvent,
+        token,
+    });
 };
 
 export const getEventById: RequestHandler = async (req, res) => {
@@ -71,6 +77,24 @@ export const updateEvent: RequestHandler = async (req, res) => {
 
 export const deleteEvent: RequestHandler = async (req, res) => {
     const { id } = req.params;
+
+    const token = req.headers.authorization?.split(" ")[1];
+
+    if (!token) {
+        return res.status(401).json({ error: "Token não fornecido!" });
+    }
+
+    const verifyToken = verifyJwt(token);
+
+    if (!verifyToken) {
+        return res.status(401).json({ error: "Token inválido ou expirado!" });
+    }
+
+    if (verifyToken.eventId !== Number(id)) {
+        return res.status(403).json({
+            error: "Você não tem permissão para deletar este evento!",
+        });
+    }
 
     const deletedEvent = await deleteEventService(Number(id));
 
