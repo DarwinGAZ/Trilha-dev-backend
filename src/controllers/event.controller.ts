@@ -17,7 +17,10 @@ import {
     exportEventUsersService,
 } from "../services/events";
 import { createJwt, verifyJwt } from "../libs/jwt";
-import { sendEmail } from "../libs/nodemailer";
+import {
+    sendEmailInRegisterEvent,
+    sendEmailInUnregisterEvent,
+} from "../libs/nodemailer";
 import { getUserByIdService } from "../services/users";
 
 export const createEvent: RequestHandler = async (req, res) => {
@@ -145,7 +148,7 @@ export const registerUserToEvent: RequestHandler = async (req, res) => {
         return res.status(404).json({ error: "Usuário não encontrado" });
     }
 
-    await sendEmail(
+    await sendEmailInRegisterEvent(
         user.name,
         user.email,
         event.name,
@@ -175,6 +178,29 @@ export const unregisterUserFromEvent: RequestHandler = async (req, res) => {
 
     if (!unresgistration) {
         return res.status(404).json({ error: "Dados invalidos" });
+    }
+
+    const user = await getUserByIdService(data.data.userId);
+
+    if (!user) {
+        return res.status(404).json({ error: "Usuário não encontrado" });
+    }
+    const event = await getEventByIdService(eventId);
+
+    if (!event) {
+        return res.status(404).json({ error: "Evento não encontrado" });
+    }
+
+    const sendEmail = await sendEmailInUnregisterEvent(
+        user.name,
+        user.email,
+        event.name,
+        event.startDate.toLocaleDateString(),
+        event.local
+    );
+
+    if (!sendEmail) {
+        return res.status(500).json({ error: "Erro ao enviar email" });
     }
 
     return res

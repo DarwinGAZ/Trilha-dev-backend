@@ -1,0 +1,336 @@
+openapi: 3.0.0
+info:
+    title: Trilha Dev Backend API
+    version: "1.0.0"
+    description: API documentation for the Trilha Dev Backend project.
+
+servers:
+    - url: http://localhost:4000
+
+paths:
+    /ping:
+        get:
+            summary: Test server connectivity
+            tags:
+                - Ping
+            responses:
+                200:
+                    description: Server is alive
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    message:
+                                        type: string
+                                        example: pong
+
+    /event:
+        post:
+            summary: Create a new event
+            tags:
+                - Events
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                name:
+                                    type: string
+                                    example: My Event
+                                date:
+                                    type: string
+                                    format: date-time
+                                    example: "2025-08-22T16:00:00Z"
+                                vacanciesLimit:
+                                    type: integer
+                                    example: 100
+            responses:
+                201:
+                    description: Event created successfully
+
+    /event/{id}:
+        get:
+            summary: Get an event by ID
+            tags:
+                - Events
+            parameters:
+                - in: path
+                  name: id
+                  required: true
+                  description: Event ID
+                  schema:
+                      type: string
+                      example: "1"
+            responses:
+                200:
+                    description: Event found
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+
+        patch:
+            summary: Update an event
+            tags:
+                - Events
+            parameters:
+                - in: path
+                  name: id
+                  required: true
+                  description: Event ID
+                  schema:
+                      type: string
+                      example: "1"
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                name:
+                                    type: string
+                                    example: Updated Event
+                                date:
+                                    type: string
+                                    format: date-time
+                                    example: "2025-08-22T18:00:00Z"
+            responses:
+                200:
+                    description: Event updated successfully
+
+        delete:
+            summary: Delete an event
+            tags:
+                - Events
+            parameters:
+                - in: path
+                  name: id
+                  required: true
+                  description: Event ID
+                  schema:
+                      type: string
+                      example: "1"
+            responses:
+                200:
+                    description: Event deleted successfully
+
+    /event/{id}/users/export:
+        get:
+            summary: Export users of an event
+            tags:
+                - Events
+            parameters:
+                - in: path
+                  name: id
+                  required: true
+                  description: Event ID
+                  schema:
+                      type: string
+                      example: "1"
+            responses:
+                200:
+                    description: Users exported successfully
+
+    /event/{eventId}/register:
+        post:
+            summary: Register a user to an event
+            tags:
+                - Events
+            parameters:
+                - in: path
+                  name: eventId
+                  required: true
+                  description: Event ID
+                  schema:
+                      type: string
+                      example: "1"
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                userId:
+                                    type: string
+                                    example: "1"
+            responses:
+                200:
+                    description: User registered successfully
+
+    /event/{eventId}/unregister:
+        delete:
+            summary: Unregister a user from an event
+            tags:
+                - Events
+            parameters:
+                - in: path
+                  name: eventId
+                  required: true
+                  description: Event ID
+                  schema:
+                      type: string
+                      example: "1"
+                - in: query
+                  name: userId
+                  required: true
+                  description: User ID to unregister
+                  schema:
+                      type: string
+                      example: "1"
+            responses:
+                200:
+                    description: User unregistered successfully
+
+    /event/{eventId}/users:
+        get:
+            summary: Get all users in an event
+            tags:
+                - Events
+            parameters:
+                - in: path
+                  name: eventId
+                  required: true
+                  description: Event ID
+                  schema:
+                      type: string
+                      example: "1"
+            responses:
+                200:
+                    description: List of users
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    type: object
+
+    /user:
+        post:
+            summary: Create a new user
+            tags:
+                - Users
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                name:
+                                    type: string
+                                    example: Darwin
+                                email:
+                                    type: string
+                                    example: darwin@example.com
+            responses:
+                201:
+                    description: User created successfully
+
+        get:
+            summary: Get a user by email
+            tags:
+                - Users
+            parameters:
+                - in: query
+                  name: email
+                  required: true
+                  description: User email
+                  schema:
+                      type: string
+                      example: darwin@example.com
+            responses:
+                200:
+                    description: User found
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+
+    /users:
+        get:
+            summary: Get all users
+            tags:
+                - Users
+            responses:
+                200:
+                    description: List of users
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    type: object
+
+    /user/{id}:
+        patch:
+            summary: Update a user
+            tags:
+                - Users
+            parameters:
+                - in: path
+                  name: id
+                  required: true
+                  description: User ID
+                  schema:
+                      type: string
+                      example: "1"
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                name:
+                                    type: string
+                                    example: Updated Name
+                                email:
+                                    type: string
+                                    example: updated@example.com
+            responses:
+                200:
+                    description: User updated successfully
+
+        delete:
+            summary: Delete a user
+            tags:
+                - Users
+            parameters:
+                - in: path
+                  name: id
+                  required: true
+                  description: User ID
+                  schema:
+                      type: string
+                      example: "1"
+            responses:
+                200:
+                    description: User deleted successfully
+
+    /user/{userId}/events:
+        get:
+            summary: Get events of a user
+            tags:
+                - Users
+            parameters:
+                - in: path
+                  name: userId
+                  required: true
+                  description: User ID
+                  schema:
+                      type: string
+                      example: "1"
+            responses:
+                200:
+                    description: List of events
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    type: object

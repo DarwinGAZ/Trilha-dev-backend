@@ -3,9 +3,7 @@ import dotenv from "dotenv";
 dotenv.config();
 
 export function createJwt(eventId: number) {
-    return JWT.sign({ eventId }, process.env.JWT_SECRET as string, {
-        expiresIn: "1h",
-    });
+    return JWT.sign({ eventId }, process.env.JWT_SECRET as string);
 }
 
 export const verifyJwt = (token: string) => {
