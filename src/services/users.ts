@@ -1,6 +1,6 @@
 import { prisma } from "../libs/prisma";
 
-interface createUserInput {
+export interface createUserInput {
     name: string;
     email: string;
     phone: string;
@@ -64,4 +64,12 @@ export const getUserEventsService = async (userId: number) => {
     }
 
     return userEvents.registrations;
+};
+
+export const getUserByIdService = async (id: number) => {
+    const user = await prisma.users.findUnique({
+        where: { id },
+    });
+
+    return user;
 };
