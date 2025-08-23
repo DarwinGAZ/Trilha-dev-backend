@@ -40,6 +40,9 @@ paths:
                                 name:
                                     type: string
                                     example: My Event
+                                description:
+                                    type: string
+                                    example: This is a sample event.
                                 date:
                                     type: string
                                     format: date-time
@@ -98,6 +101,12 @@ paths:
                                     type: string
                                     format: date-time
                                     example: "2025-08-22T18:00:00Z"
+                                description:
+                                    type: string
+                                    example: Updated description.
+                                vacanciesLimit:
+                                    type: integer
+                                    example: 150
             responses:
                 200:
                     description: Event updated successfully
@@ -114,6 +123,15 @@ paths:
                   schema:
                       type: string
                       example: "1"
+                - in: header
+                  name: Authorization
+                  required: true
+                  description: Bearer token for authentication
+                  schema:
+                      type: string
+                      example: Bearer your_jwt_token_here
+            requestBody:
+                required: true
             responses:
                 200:
                     description: Event deleted successfully
@@ -175,13 +193,16 @@ paths:
                   schema:
                       type: string
                       example: "1"
-                - in: query
-                  name: userId
-                  required: true
-                  description: User ID to unregister
-                  schema:
-                      type: string
-                      example: "1"
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                userId:
+                                    type: string
+                                    example: "1"
             responses:
                 200:
                     description: User unregistered successfully
@@ -227,6 +248,9 @@ paths:
                                 email:
                                     type: string
                                     example: darwin@example.com
+                                phone:
+                                    type: string
+                                    example: "12345678910"
             responses:
                 201:
                     description: User created successfully
@@ -292,6 +316,9 @@ paths:
                                 email:
                                     type: string
                                     example: updated@example.com
+                                phone:
+                                    type: string
+                                    example: "10987654321"
             responses:
                 200:
                     description: User updated successfully
