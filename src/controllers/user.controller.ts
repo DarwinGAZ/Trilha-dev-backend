@@ -33,7 +33,10 @@ export const createUser: RequestHandler = async (req, res) => {
 };
 
 export const getAllUsers: RequestHandler = async (req, res) => {
-    const users = await getAllUsersService();
+    const page = req.query.page ? Number(req.query.page) : 1;
+    const limit = req.query.limit ? Number(req.query.limit) : 10;
+
+    const users = await getAllUsersService(page, limit);
 
     return res.json(users);
 };

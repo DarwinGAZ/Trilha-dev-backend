@@ -26,8 +26,11 @@ export const getUserByEmailService = async (email: string) => {
     return user;
 };
 
-export const getAllUsersService = async () => {
-    const users = await prisma.users.findMany();
+export const getAllUsersService = async (page: number, limit: number) => {
+    const users = await prisma.users.findMany({
+        skip: (page - 1) * limit,
+        take: limit,
+    });
 
     return users;
 };

@@ -16,6 +16,12 @@ interface updateEventInput {
     vacanciesLimit?: number;
 }
 
+interface findEventsByInfoInput {
+    name?: string;
+    local?: string;
+    startDate?: string;
+}
+
 export const createEventService = async (data: createEventInput) => {
     const newEvent = await prisma.events.create({
         data: {
@@ -25,6 +31,15 @@ export const createEventService = async (data: createEventInput) => {
     });
 
     return newEvent;
+};
+
+export const getAllEventsService = async (page: number, limit: number) => {
+    const events = await prisma.events.findMany({
+        skip: (page - 1) * limit,
+        take: limit,
+    });
+
+    return events;
 };
 
 export const getEventByIdService = async (id: string) => {
@@ -140,4 +155,21 @@ export const exportEventUsersService = async (id: number) => {
     const jsonData = JSON.stringify(registrations, null, 2);
 
     return jsonData;
+};
+
+export const findEventsByInfoService = (data: findEventsByInfoInput) => {
+    const events = prisma.events.findMany({
+        where: {
+            OR: [
+                { name: { contains: data.name } },
+                { local: { contains: data.local } },
+                {
+                    startDate: data.startDate
+                        ? new Date(data.startDate)
+                        : undefined,
+                },
+            ],
+        },
+    });
+    return events;
 };

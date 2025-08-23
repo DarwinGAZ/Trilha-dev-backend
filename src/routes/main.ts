@@ -8,10 +8,12 @@ export const routes = Router();
 routes.get("/ping", pingController.ping);
 
 routes.post("/event", eventController.createEvent);
+routes.get("/events", eventController.getAllEvents);
 routes.get("/event/:id", eventController.getEventById);
 routes.patch("/event/:id", eventController.updateEvent);
 routes.delete("/event/:id", eventController.deleteEvent);
 routes.get("/event/:id/users/export", eventController.exportEventUsers);
+routes.get("/events/info", eventController.getEventByInfo);
 
 routes.post("/event/:eventId/register", eventController.registerUserToEvent);
 routes.delete(

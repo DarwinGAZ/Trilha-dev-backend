@@ -1,6 +1,7 @@
 import { RequestHandler } from "express";
 import {
     createEventSchema,
+    getEventByInfoSchema,
     updateEventSchema,
     UserToEventSchema,
 } from "../schemas/eventSchema";
@@ -15,6 +16,8 @@ import {
     getAllUsersInEventService,
     registrationCountService,
     exportEventUsersService,
+    findEventsByInfoService,
+    getAllEventsService,
 } from "../services/events";
 import { createJwt, verifyJwt } from "../libs/jwt";
 import {
@@ -46,6 +49,15 @@ export const createEvent: RequestHandler = async (req, res) => {
         event: newEvent,
         token,
     });
+};
+
+export const getAllEvents: RequestHandler = async (req, res) => {
+    const page = req.query.page ? Number(req.query.page) : 1;
+    const limit = req.query.limit ? Number(req.query.limit) : 10;
+
+    const events = await getAllEventsService(page, limit);
+
+    return res.status(200).json(events);
 };
 
 export const getEventById: RequestHandler = async (req, res) => {
@@ -239,4 +251,22 @@ export const exportEventUsers: RequestHandler = async (req, res) => {
     return res
         .status(200)
         .json({ message: "Usuários do evento exportados com sucesso!" });
+};
+
+export const getEventByInfo: RequestHandler = async (req, res) => {
+    const data = await getEventByInfoSchema.safeParse(req.body);
+
+    if (!data.success) {
+        return res.json({ error: data.error.flatten().fieldErrors });
+    }
+
+    const events = await findEventsByInfoService(data.data);
+
+    if (!events || events.length === 0) {
+        return res
+            .status(404)
+            .json({ error: "Nenhum evento encontrado com esses parâmetros" });
+    }
+
+    return res.status(200).json(events);
 };

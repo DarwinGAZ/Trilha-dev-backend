@@ -40,3 +40,14 @@ export const UserToEventSchema = z.object({
         .int()
         .positive("O ID do usuário deve ser um número positivo"),
 });
+
+export const getEventByInfoSchema = z.object({
+    name: z.string().optional(),
+    local: z.string().optional(),
+    startDate: z
+        .string()
+        .optional()
+        .refine((val) => !val || !isNaN(Date.parse(val)), {
+            message: "Data inválida",
+        }),
+});
